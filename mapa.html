@@ -13,26 +13,26 @@
       var map;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 2,
+          zoom: 16,
           center: {lat: -30.040301, lng: -51.228566}
         });
 
-		map.data.loadGeoJson('testegeo.json');
-
         map.data.setStyle(function(feature) {
-          var magnitude = feature.getProperty('segAtras');
+					var segundosAtras = feature.getProperty('segAtras');
           return {
-            icon: getCircle(10)
+            icon: getCircle(segundosAtras)
           };
         });
+				
+				map.data.loadGeoJson('testegeo.json');
       }
 
-      function getCircle(magnitude) {
+      function getCircle(segundosAtras) {
         return {
           path: google.maps.SymbolPath.CIRCLE,
           fillColor: 'red',
-          fillOpacity: .2,
-          scale: Math.pow(2, magnitude) / 2,
+          fillOpacity: 15/(14+segundosAtras),
+          scale: 10,
           strokeColor: 'white',
           strokeWeight: .5
         };

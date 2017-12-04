@@ -9,9 +9,8 @@
          "geometry":{
             "type":"Point",
             "coordinates":[
-               -30.037448,
                -51.232035,
-               0
+               -30.037448
             ]
          },
          "id":"usc000csx3"
@@ -24,9 +23,8 @@
          "geometry":{
             "type":"Point",
             "coordinates":[
-               -30.037403,
                -51.233003,
-               0
+               -30.037403
             ]
          },
          "id":"usc000csw5"
@@ -39,9 +37,8 @@
          "geometry":{
             "type":"Point",
             "coordinates":[
-               -30.037336,
                -51.236372,
-               0
+               -30.037336
             ]
          },
          "id":"ak10562838"
