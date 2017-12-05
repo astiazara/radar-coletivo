@@ -14,16 +14,24 @@ function initMap() {
 		};
 	});
 
-	map.data.loadGeoJson('back-end/public/linha/178');
+	var linha = obterLinha();
+	if(linha !== null && linha !== '' && linha !== undefined){
+		map.data.loadGeoJson('back-end/public/linha/' + linha);
+	}
 }
 
 function getCircle(segundosAtras) {
 	return {
 		path: google.maps.SymbolPath.CIRCLE,
 		fillColor: 'red',
-		fillOpacity: 15/(14+segundosAtras),
+		fillOpacity: 15/(15+segundosAtras),
 		scale: 13,
 		strokeColor: 'white',
 		strokeWeight: 0.5
 	};
+}
+
+function obterLinha(){
+	var url = new URL(window.location.href);
+	return url.searchParams.get('linha');
 }
