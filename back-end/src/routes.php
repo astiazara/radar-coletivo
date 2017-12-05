@@ -24,22 +24,33 @@ $app->get('/linha/[{id}]', function (Request $request, Response $response, array
     $id = $args['id'];
     switch($id){
       case "178":
-        $data = array(criarPonto(1, -30.037448, -51.232035), 
+        $pontos = array(criarPonto(1, -30.037448, -51.232035), 
                       criarPonto(10, -30.037403, -51.233003),
                       criarPonto(20, -30.037336, -51.236372));
         break;
       case "T1":
-        $data = array(criarPonto(1, -30.037448, -51.232035), 
+        $pontos = array(criarPonto(1, -30.037448, -51.232035), 
                       criarPonto(30, -30.037403, -51.233003),
                       criarPonto(60, -30.037336, -51.236372));
         break;
       default:
-        $data = array();
+        $pontos = array();
     }
-    $response = $response->withJson($data);
+    $response = $response->withJson(criarColecaoPontos($pontos));
     return $response;
 });
 
 function criarPonto($segundosAtras, $latitude, $longitude){
-  return array('segAtras'=>$segundosAtras, 'lat'=>$latitude, 'lon'=>$longitude);
+  return array("type"=>"Feature", 
+               "properties"=>array(
+                 "segAtras"=>$segundosAtras), 
+               "geometry"=>array(
+                 "type"=>"Point", 
+                 "coordinates"=>array($longitude, $latitude)
+               ));
+}
+
+function criarColecaoPontos($pontos){
+  return array("type"=>"FeatureCollection",
+               "features"=> $pontos);
 }
