@@ -6,6 +6,7 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<script src="linhas-ativas.js"></script>
 	<style>
 	html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 	</style>
@@ -25,9 +26,9 @@
 			</div>
 			<div class="w3-bar-block">
 				<a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-				<a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-users fa-fw"></i>  Consultar Linhas Ativas</a>
-				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-eye fa-fw"></i>  Informar do Ônibus</a>
-				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  Informar da Parada</a>
+				<a href="index.html" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
+				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-crosshairs fa-fw"></i>  Informar do Ônibus</a>
+				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-map-marker fa-fw"></i>  Informar da Parada</a>
 			</div>
 		</nav>
 
@@ -39,50 +40,41 @@
 
 			<div class="w3-container w3-padding">
 				
-				<div id="icone" class="w3-display-middle">
-					<i class="fa fa-refresh fa-5x fa-spin"></i>
+				<div id="statusEspera" class="w3-display-middle">
+					<i class="fa fa-refresh fa-4x fa-spin"></i>
 				</div>
 
-				<div id="resultado" class="w3-bar">
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-					<a href="#" class="w3-bar-item w3-button w3-round-large w3-white w3-border">Link Button</a>
-				</div>
+				<div id="resultado" class="w3-bar"></div>
 			</div>
 			
 			<!-- End page content -->
 		</div>
 
 		<script>
-		// Get the Sidebar
-		var mySidebar = document.getElementById("mySidebar");
+			// Get the Sidebar
+			var mySidebar = document.getElementById("mySidebar");
 
-		// Get the DIV with overlay effect
-		var overlayBg = document.getElementById("myOverlay");
+			// Get the DIV with overlay effect
+			var overlayBg = document.getElementById("myOverlay");
 
-		// Toggle between showing and hiding the sidebar, and add overlay effect
-		function w3_open() {
-				if (mySidebar.style.display === 'block') {
-						mySidebar.style.display = 'none';
-						overlayBg.style.display = "none";
-				} else {
-						mySidebar.style.display = 'block';
-						overlayBg.style.display = "block";
-				}
-		}
+			// Toggle between showing and hiding the sidebar, and add overlay effect
+			function w3_open() {
+					if (mySidebar.style.display === 'block') {
+							mySidebar.style.display = 'none';
+							overlayBg.style.display = "none";
+					} else {
+							mySidebar.style.display = 'block';
+							overlayBg.style.display = "block";
+					}
+			}
 
-		// Close the sidebar with the close button
-		function w3_close() {
-				mySidebar.style.display = "none";
-				overlayBg.style.display = "none";
-		}
+			// Close the sidebar with the close button
+			function w3_close() {
+					mySidebar.style.display = "none";
+					overlayBg.style.display = "none";
+			}
+			
+			buscarLinhasAtivas();
 		</script>
 
 	</body>
