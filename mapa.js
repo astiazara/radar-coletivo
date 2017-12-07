@@ -49,6 +49,19 @@ function initMap() {
 	definirEstilo();
 
 	apresentarLinhaContinuamenteSeExiste();
+	
+	centralizarNaPosicaoUsuario();
+}
+
+function centralizarNaPosicaoUsuario(){
+	if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(posicaoUsuarioRecebida);
+	}
+}
+
+function posicaoUsuarioRecebida(position) {
+	var centro = {lat: position.coords.latitude, lng: position.coords.longitude};
+	map.setCenter(centro);
 }
 
 function apresentarLinhaContinuamenteSeExiste(){
@@ -58,7 +71,6 @@ function apresentarLinhaContinuamenteSeExiste(){
 		setInterval(
 			function(){
 				apresentarLinha();
-				console.warn("Atualizou!");
 			}, 1000 * 4);
 	}
 }
