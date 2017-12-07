@@ -41,5 +41,5 @@ function apresentarLinhasAtivas(linhasAtivas){
 
 function criarBotao(linha){
   return "<a href=\"mapa.html?linha=" + linha + 
-    "\" class=\"w3-bar-item w3-button w3-round-large w3-white w3-border\" style=\"width:10%\"><i class=\"fa fa-bus fa-2x\"></i><br><b>" + linha + "</b></a>";
+    "\" class=\"w3-bar-item w3-button w3-round-large w3-white w3-border\" style=\"width:100px\"><i class=\"fa fa-bus fa-2x\"></i><br><b>" + linha + "</b></a>";
 }
