@@ -38,15 +38,15 @@ function criarPontosAleatorios(){
   $pontos = array();
   
   if(rand(0,1) == 0){
-    $pontos[] = criarPonto(rand(1, 60), -30.037448, -51.232035);
+    $pontos[] = criarPonto(rand(0, 60), -30.037448, -51.232035);
   }
   
   //if(rand(0,1) == 0){
-    $pontos[] = criarPonto(rand(1, 60), -30.037403, -51.233003);
+    $pontos[] = criarPonto(rand(0, 60), -30.037403, -51.233003);
   //}
   
   if(rand(0,1) == 0){
-    $pontos[] = criarPonto(rand(1, 60), -30.037336, -51.236372);
+    $pontos[] = criarPonto(rand(0, 60), -30.037336, -51.236372);
   }
   
   return $pontos;

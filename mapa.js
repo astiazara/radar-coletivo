@@ -107,6 +107,17 @@ function getCircle(segundosAtras) {
 	return {
 		path: google.maps.SymbolPath.CIRCLE,
 		fillColor: 'red',
+		fillOpacity: 50/(50+segundosAtras),
+		scale: 15 - (segundosAtras/60 * 10),
+		strokeColor: 'white',
+		strokeWeight: 0.5
+	};
+}
+
+function getCircle1(segundosAtras) {
+	return {
+		path: google.maps.SymbolPath.CIRCLE,
+		fillColor: 'red',
 		fillOpacity: 15/(15+segundosAtras),
 		scale: 13,
 		strokeColor: 'white',
