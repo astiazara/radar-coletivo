@@ -25,7 +25,6 @@ function CenterControl(controlDiv, map) {
 	controlText.innerHTML = 'Voltar';
 	controlUI.appendChild(controlText);
 
-	// Setup the click event listeners: simply set the map to Chicago.
 	controlUI.addEventListener('click', function() {
 		window.location.assign("index.html")
 	});
@@ -49,13 +48,49 @@ function initMap() {
 	
 	definirEstilo();
 
-	apresentarLinha();
+	apresentarLinhaContinuamenteSeExiste();
+}
+
+function apresentarLinhaContinuamenteSeExiste(){
+	if(existeLinha()){
+		apresentarLinha();
+	
+		setInterval(
+			function(){
+				apresentarLinha();
+				console.warn("Atualizou!");
+			}, 1000 * 4);
+	}
+}
+
+function existeLinha(){
+	var linha = obterLinha();
+	return (linha !== null && linha !== '' && linha !== undefined);
 }
 
 function apresentarLinha(){
-	var linha = obterLinha();
-	if(linha !== null && linha !== '' && linha !== undefined){
-		map.data.loadGeoJson('back-end/public/linha/' + linha);
+	var antigos = obterFeatures();
+	map.data.loadGeoJson('back-end/public/linha/' + obterLinha(), 
+											 null,
+											 function(featuresNovas){ 
+												setTimeout(function(){
+													removerFeatures(antigos);
+												}, 600);
+											 });
+}
+
+function obterFeatures(){
+	var features = [];
+	map.data.forEach(
+		function (feature) {
+			features.push(feature);
+		});
+	return features;
+}
+
+function removerFeatures(features){
+	for(var i in features){
+		map.data.remove(features[i]);
 	}
 }
 

@@ -32,7 +32,7 @@ function buscarLinhasAtivas() {
 
 function apresentarLinhasAtivas(linhasAtivas){
   var botoes = "";
-  for(var i = 0; i < linhasAtivas.length; i++) { 
+  for(var i in linhasAtivas) { 
     botoes += criarBotao(linhasAtivas[i]);
   }
   document.getElementById("resultado").innerHTML = botoes;

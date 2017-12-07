@@ -24,14 +24,8 @@ $app->get('/linha/[{id}]', function (Request $request, Response $response, array
     $id = $args['id'];
     switch($id){
       case "178":
-        $pontos = array(criarPonto(1, -30.037448, -51.232035), 
-                      criarPonto(10, -30.037403, -51.233003),
-                      criarPonto(20, -30.037336, -51.236372));
-        break;
       case "T1":
-        $pontos = array(criarPonto(1, -30.037448, -51.232035), 
-                      criarPonto(30, -30.037403, -51.233003),
-                      criarPonto(60, -30.037336, -51.236372));
+        $pontos = criarPontosAleatorios();
         break;
       default:
         $pontos = array();
@@ -39,6 +33,24 @@ $app->get('/linha/[{id}]', function (Request $request, Response $response, array
     $response = $response->withJson(criarColecaoPontos($pontos));
     return $response;
 });
+
+function criarPontosAleatorios(){
+  $pontos = array();
+  
+  if(rand(0,1) == 0){
+    $pontos[] = criarPonto(rand(1, 60), -30.037448, -51.232035);
+  }
+  
+  //if(rand(0,1) == 0){
+    $pontos[] = criarPonto(rand(1, 60), -30.037403, -51.233003);
+  //}
+  
+  if(rand(0,1) == 0){
+    $pontos[] = criarPonto(rand(1, 60), -30.037336, -51.236372);
+  }
+  
+  return $pontos;
+}
 
 function criarPonto($segundosAtras, $latitude, $longitude){
   return array("type"=>"Feature", 
