@@ -9,13 +9,21 @@ function esconder(elemento){
 }
 
 function mostrarStatusEspera(){
+  esconder("semResultado");
   esconder("resultado");
   mostrar("statusEspera");
 }
 
 function mostrarResultado(){
+  esconder("semResultado");
   esconder("statusEspera");
   mostrar("resultado");
+}
+
+function mostrarSemResultado(){
+  esconder("statusEspera");
+  esconder("resultado");
+  mostrar("semResultado");
 }
 
 function buscarLinhasAtivas() {
@@ -31,12 +39,16 @@ function buscarLinhasAtivas() {
 }
 
 function apresentarLinhasAtivas(linhasAtivas){
-  var botoes = "";
-  for(var i in linhasAtivas) { 
-    botoes += criarBotao(linhasAtivas[i]);
+  if(linhasAtivas.length === 0){
+    mostrarSemResultado();
+  } else {
+    var botoes = "";
+    for(var i in linhasAtivas) { 
+      botoes += criarBotao(linhasAtivas[i]);
+    }
+    document.getElementById("resultado").innerHTML = botoes;
+    mostrarResultado();
   }
-  document.getElementById("resultado").innerHTML = botoes;
-  mostrarResultado();
 }
 
 function criarBotao(linha){
