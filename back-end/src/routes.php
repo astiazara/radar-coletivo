@@ -15,23 +15,33 @@ use Slim\Http\Response;
 
 $app->get('/linhas-ativas', function (Request $request, Response $response, array $args) {
     
-    $data = array('178', 'T1');
-    $response = $response->withJson($data);
-    return $response;
+  $conn = criarConexao();
+
+  $sqlConsultaLinhas = "SELECT distinct linha FROM rastro order by linha";
+  $stmt = $conn->prepare($sqlConsultaLinhas);
+  $stmt->execute();
+  $resultSet = $stmt->fetchAll();
+
+  $response = $response->withJson(array_column($resultSet, 0));
+  return $response;
 });
 
 $app->get('/linha/[{id}]', function (Request $request, Response $response, array $args) {
-    $id = $args['id'];
-    switch($id){
-      case "178":
-      case "T1":
-        $pontos = criarPontosAleatorios();
-        break;
-      default:
-        $pontos = array();
-    }
-    $response = $response->withJson(criarColecaoPontos($pontos));
-    return $response;
+  $id = $args['id'];
+
+  $conn = criarConexao();
+  $sqlConsultaLinha = "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro WHERE linha = :linha";
+  $stmt = $conn->prepare($sqlConsultaLinha);
+  $stmt->bindParam("linha", $id);
+  $stmt->execute();
+  $pontos = array();
+  
+  foreach ($stmt->fetchAll() as $row) {
+    $pontos[] = criarPonto($row["segAtras"], floatval($row["lat"]), floatval($row["lng"]));
+  }
+  
+  $response = $response->withJson(criarColecaoPontos($pontos));
+  return $response;
 });
 
 function criarPontosAleatorios(){
