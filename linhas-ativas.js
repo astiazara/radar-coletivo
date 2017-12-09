@@ -34,7 +34,7 @@ function buscarLinhasAtivas() {
           apresentarLinhasAtivas(JSON.parse(this.responseText));
      }
   };
-  xhttp.open("GET", "back-end/public/linhas-ativas", true);
+  xhttp.open("GET", "back-end/public/linhas-ativas?t=" + Math.random, true);
   xhttp.send(); 
 }
 

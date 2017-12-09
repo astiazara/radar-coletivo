@@ -31,9 +31,31 @@ function iniciarSeValido(){
 }
 
 function validar(){
-  linha = document.getElementById("linhaDigitada").value;
+  var txtLinhaDigitada = document.getElementById("linhaDigitada");
+	linha = txtLinhaDigitada.value;
+	
+	if(linha === null || linha === ""){
+		txtLinhaDigitada.focus();
+		return false;
+	}
+	
+	if(linha.length < 2){
+		mostrarAviso("Isto não parece ser um número de linha.");
+		return false;
+	}
+	
+	linha = linha.toUpperCase();
   maximoTempo = 60 * document.getElementById("maximoTempo").value;
+	esconderAviso();
   return true;
+}
+
+function mostrarAviso(textoAviso){
+	document.getElementById("textoAviso").innerHTML = textoAviso;
+	mostrar("aviso");
+}
+function esconderAviso(){
+	esconder("aviso");
 }
 
 function iniciar(){
@@ -86,12 +108,30 @@ function ativo(){
 
 function recebeuGeoLocalizacao(position) {
   if(ativo()){
-    console.warn("Latitude: " + position.coords.latitude + 
-      " Longitude: " + position.coords.longitude); 
-  	
-    setTimeout(
+    enviarRastreamento(position);
+    solicitarGeoLocalizacaoNovamente();
+	}
+}
+
+function solicitarGeoLocalizacaoNovamente(){
+	setTimeout(
 			function(){
 				navigator.geolocation.getCurrentPosition(recebeuGeoLocalizacao);
 			}, 10000);
-	}
+}
+
+function enviarRastreamento(position){
+	var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+          apresentarResposta(this.responseText);
+     }
+  };
+  xhttp.open("POST", "back-end/public/linha-ativa", true);
+  xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhttp.send("linha=" + linha + "&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude); 
+}
+
+function apresentarResposta(responseText){
+	console.warn("Foi!");
 }

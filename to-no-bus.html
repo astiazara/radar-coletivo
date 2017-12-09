@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-	<title>Radar Coletivo</title>
+	<title>Radar Coletivo PoA</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -16,13 +16,13 @@
 		<!-- Top container -->
 		<div class="w3-bar w3-top w3-black w3-large" style="z-index:4">
 			<button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();"><i class="fa fa-bars"></i>  Menu</button>
-			<span class="w3-bar-item w3-right">Radar Coletivo</span>
+			<span class="w3-bar-item w3-right">Radar Coletivo PoA</span>
 		</div>
 
 		<!-- Sidebar/menu -->
 		<nav class="w3-sidebar w3-collapse w3-white w3-animate-left" style="z-index:3;width:300px;" id="mySidebar">
 			<div class="w3-container">
-				<h5>Radar Coletivo</h5>
+				<h5>Radar Coletivo PoA</h5>
 			</div>
 			<div class="w3-bar-block">
 				<a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
@@ -56,6 +56,10 @@
 						<h5>Qual o número da linha?</h5>
 						<input id="linhaDigitada" class="w3-input w3-border" type="text">
 
+						<div id="aviso" class="w3-panel w3-card w3-pale-yellow w3-display-container" style="display: none">
+							<p id="textoAviso">Aviso.</p>
+						</div>
+						
 						<div class="w3-panel w3-padding w3-center">
 							<button onclick="iniciarSeValido()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
 								<i class="fa fa-crosshairs fa-2x"></i>
@@ -65,7 +69,7 @@
 						</div>
 					</div>
 					
-					<div id="rastreador">
+					<div id="rastreador" style="display: none">
 						<div class="w3-panel w3-padding w3-center">
 							<h2 id="tituloRastreando">Rastreando</h2>
 							<h1 id="cronometro">00</h1>
