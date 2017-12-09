@@ -6,7 +6,7 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="linhas-ativas.js"></script>
+	<script src="to-no-bus.js"></script>
 	<style>
 	html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 	</style>
@@ -26,8 +26,8 @@
 			</div>
 			<div class="w3-bar-block">
 				<a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-				<a href="index.html" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
-				<a href="to-no-bus.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-crosshairs fa-fw"></i>  Informar do Ônibus</a>
+				<a href="index.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
+				<a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-crosshairs fa-fw"></i>  Informar do Ônibus</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-map-marker fa-fw"></i>  Informar da Parada</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  O povo quer saber</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-question-circle-o fa-fw"></i>  O que é isso?</a>
@@ -42,19 +42,41 @@
 
 			<div class="w3-container w3-padding">
 				
-				<div id="statusEspera" class="w3-display-middle">
-					<i class="fa fa-refresh fa-4x fa-spin"></i>
-				</div>
+				<div class="w3-container">
+					
+					<div id="formulario">
+						<h5>Rastrear por quanto tempo?</h5>
+						<select id="maximoTempo" class="w3-select" name="option">
+							<option value="1">1 minuto</option>
+							<option value="2">2 minutos</option>
+							<option value="3">3 minutos</option>
+							<option value="-1">Infinito (uau!)</option>
+						</select>
 
-				<div id="resultado" class="w3-bar"></div>
-				
-				<div id="semResultado" class="w3-panel w3-display-middle">
-					<div class="w3-center">
-						<i class="fa fa-frown-o fa-4x"></i>
+						<h5>Qual o número da linha?</h5>
+						<input id="linhaDigitada" class="w3-input w3-border" type="text">
+
+						<div class="w3-panel w3-padding w3-center">
+							<button onclick="iniciarSeValido()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
+								<i class="fa fa-crosshairs fa-2x"></i>
+								<br/>
+								<b>Rastrear!</b>
+							</button>
+						</div>
 					</div>
-					<p>
-						Não há linhas ativas no momento.
-					</p>
+					
+					<div id="rastreador">
+						<div class="w3-panel w3-padding w3-center">
+							<h2 id="tituloRastreando">Rastreando</h2>
+							<h1 id="cronometro">00</h1>
+							<button onclick="parar()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
+								<i class="fa fa-hand-stop-o fa-2x"></i>
+								<br/>
+								<b>Parar</b>
+							</button>
+						</div>
+					</div>
+					
 				</div>
 			</div>
 			
@@ -85,7 +107,7 @@
 					overlayBg.style.display = "none";
 			}
 			
-			buscarLinhasAtivas();
+			parar();
 		</script>
 
 	</body>
