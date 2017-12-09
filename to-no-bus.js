@@ -127,11 +127,11 @@ function enviarRastreamento(position){
           apresentarResposta(this.responseText);
      }
   };
-  xhttp.open("POST", "back-end/public/linha-ativa", true);
+  xhttp.open("POST", "back-end/public/linhas-ativas", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
 	xhttp.send("linha=" + linha + "&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude); 
 }
 
 function apresentarResposta(responseText){
-	console.warn("Foi!");
+	console.warn("Foi! Resposta: " + responseText);
 }
