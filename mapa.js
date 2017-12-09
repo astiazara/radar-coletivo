@@ -26,7 +26,7 @@ function CenterControl(controlDiv, map) {
 	controlUI.appendChild(controlText);
 
 	controlUI.addEventListener('click', function() {
-		window.location.assign("index.html")
+		window.location.assign("linhas-ativas.html");
 	});
 }
 
