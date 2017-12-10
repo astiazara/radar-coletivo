@@ -15,6 +15,7 @@ use Slim\Http\Response;
 
 define("MAXIMO_TEMPO_ATRAS_EM_MINUTOS", 5);
 
+
 $app->get('/maximo-tempo-atras-em-minutos', function (Request $request, Response $response, array $args) {
   $response->getBody()->write(MAXIMO_TEMPO_ATRAS_EM_MINUTOS);
   return $response;
@@ -22,7 +23,7 @@ $app->get('/maximo-tempo-atras-em-minutos', function (Request $request, Response
 
 $app->get('/linhas-ativas', function (Request $request, Response $response, array $args) {
     
-  $conn = criarConexao();
+  $conn = criarConexao($this);
 
   $sqlConsultaLinhas = 
     "SELECT distinct linha FROM rastro WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " .
@@ -38,7 +39,7 @@ $app->get('/linhas-ativas', function (Request $request, Response $response, arra
 $app->get('/linha/[{id}]', function (Request $request, Response $response, array $args) {
   $id = $args['id'];
 
-  $conn = criarConexao();
+  $conn = criarConexao($this);
   $sqlConsultaLinha = 
     "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro " . 
     "WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " . MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " AND linha = :linha " .
@@ -73,23 +74,23 @@ function criarColecaoPontos($pontos){
                "features"=> $pontos);
 }
 
-$app->post('/linhas-ativas','criarRastro');
-
-function criarConexao(){
-  return new PDO('mysql:host=localhost;dbname=radarcoletivo',
-      'app',
-      'p47ArJMX4FF9XUZM',
+function criarConexao($isso){
+  $db = $isso->get('settings')['db'];
+  
+  return new PDO('mysql:host=' . $db['host'] . ';dbname=' . $db['dbname'] ,
+      $db['username'],
+      $db['password'],
       array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
     );
 }
 
-function criarRastro(Request $request, Response $response, array $args) {
+$app->post('/linhas-ativas', function (Request $request, Response $response, array $args) {
   $data = $request->getParsedBody();
   $linha = filter_var($data['linha'], FILTER_SANITIZE_STRING);
   $lat =  filter_var($data['lat'], FILTER_SANITIZE_STRING);
   $lng =  filter_var($data['lng'], FILTER_SANITIZE_STRING);
   
-  $conn = criarConexao();
+  $conn = criarConexao($this);
   
   $sqlConsultaLinha = "SELECT COUNT(*) FROM linha WHERE id = :linha";
   $stmt = $conn->prepare($sqlConsultaLinha);
@@ -112,4 +113,4 @@ function criarRastro(Request $request, Response $response, array $args) {
     $response = $response->withStatus(404);
   }
   return $response;
-}
+});
