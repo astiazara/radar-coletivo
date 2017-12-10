@@ -122,10 +122,10 @@ function getCircle(segundosAtras) {
 	return {
 		path: google.maps.SymbolPath.CIRCLE,
 		fillColor: 'red',
-		fillOpacity: 1,
-		scale: calcularValorGrafico(5, 17, segundosAtras),
+		fillOpacity: calcularValorGrafico(0.1, 1, segundosAtras),
+		scale: calcularValorGrafico(5, 15, segundosAtras),
 		strokeColor: 'red',
-		strokeWeight: 0.5
+		strokeWeight: 0.0
 	};
 }
 
