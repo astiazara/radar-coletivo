@@ -117,13 +117,13 @@ function solicitarGeoLocalizacaoNovamente(){
 	setTimeout(
 			function(){
 				navigator.geolocation.getCurrentPosition(recebeuGeoLocalizacao);
-			}, 10000);
+			}, 5000);
 }
 
 function enviarRastreamento(position){
 	var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
-      if(this.readyState == 4 && this.status == 200) {
+      if(this.readyState == 4 && this.status == 201) {
           apresentarResposta(this.responseText);
      }
   };

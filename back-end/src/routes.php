@@ -13,11 +13,20 @@ use Slim\Http\Response;
 //     return $this->renderer->render($response, 'index.phtml', $args);
 // });
 
+define("MAXIMO_TEMPO_ATRAS_EM_MINUTOS", 5);
+
+$app->get('/maximo-tempo-atras-em-minutos', function (Request $request, Response $response, array $args) {
+  $response->getBody()->write(MAXIMO_TEMPO_ATRAS_EM_MINUTOS);
+  return $response;
+});
+
 $app->get('/linhas-ativas', function (Request $request, Response $response, array $args) {
     
   $conn = criarConexao();
 
-  $sqlConsultaLinhas = "SELECT distinct linha FROM rastro order by linha";
+  $sqlConsultaLinhas = 
+    "SELECT distinct linha FROM rastro WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " .
+    MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " ORDER BY linha";
   $stmt = $conn->prepare($sqlConsultaLinhas);
   $stmt->execute();
   $resultSet = $stmt->fetchAll();
@@ -30,37 +39,24 @@ $app->get('/linha/[{id}]', function (Request $request, Response $response, array
   $id = $args['id'];
 
   $conn = criarConexao();
-  $sqlConsultaLinha = "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro WHERE linha = :linha";
+  $sqlConsultaLinha = 
+    "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro " . 
+    "WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " . MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " AND linha = :linha " .
+    " ORDER BY datahora";
+  $this->logger->info($sqlConsultaLinha);
   $stmt = $conn->prepare($sqlConsultaLinha);
   $stmt->bindParam("linha", $id);
   $stmt->execute();
   $pontos = array();
   
   foreach ($stmt->fetchAll() as $row) {
+    $this->logger->info($row["segAtras"]);
     $pontos[] = criarPonto($row["segAtras"], floatval($row["lat"]), floatval($row["lng"]));
   }
   
   $response = $response->withJson(criarColecaoPontos($pontos));
   return $response;
 });
-
-function criarPontosAleatorios(){
-  $pontos = array();
-  
-  if(rand(0,1) == 0){
-    $pontos[] = criarPonto(rand(0, 60), -30.037448, -51.232035);
-  }
-  
-  //if(rand(0,1) == 0){
-    $pontos[] = criarPonto(rand(0, 60), -30.037403, -51.233003);
-  //}
-  
-  if(rand(0,1) == 0){
-    $pontos[] = criarPonto(rand(0, 60), -30.037336, -51.236372);
-  }
-  
-  return $pontos;
-}
 
 function criarPonto($segundosAtras, $latitude, $longitude){
   return array("type"=>"Feature", 

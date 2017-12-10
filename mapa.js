@@ -1,5 +1,6 @@
 
 var map;
+var MAXIMO_SEGUNDOS_ATRAS = 3 * 60;
 
 function CenterControl(controlDiv, map) {
 	// Set CSS for the control border.
@@ -39,11 +40,13 @@ function criarControle(){
 }
 
 function initMap() {
+	buscarMaximoTempoAtrasEmMinutos();
+	
 	map = new google.maps.Map(document.getElementById('map'), {
 		zoom: 16,
 		center: {lat: -30.040301, lng: -51.228566}
 	});
-	
+		
 	criarControle();
 	
 	definirEstilo();
@@ -71,7 +74,7 @@ function apresentarLinhaContinuamenteSeExiste(){
 		setInterval(
 			function(){
 				apresentarLinha();
-			}, 1000 * 4);
+			}, 4000);
 	}
 }
 
@@ -119,20 +122,9 @@ function getCircle(segundosAtras) {
 	return {
 		path: google.maps.SymbolPath.CIRCLE,
 		fillColor: 'red',
-		fillOpacity: 50/(50+segundosAtras),
-		scale: 15 - (segundosAtras/60 * 10),
-		strokeColor: 'white',
-		strokeWeight: 0.5
-	};
-}
-
-function getCircle1(segundosAtras) {
-	return {
-		path: google.maps.SymbolPath.CIRCLE,
-		fillColor: 'red',
-		fillOpacity: 15/(15+segundosAtras),
-		scale: 13,
-		strokeColor: 'white',
+		fillOpacity: 1,
+		scale: calcularValorGrafico(5, 17, segundosAtras),
+		strokeColor: 'red',
 		strokeWeight: 0.5
 	};
 }
@@ -149,4 +141,31 @@ function getParameterByName(name, url) {
 	if (!results) return null;
 	if (!results[2]) return '';
 	return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+function buscarMaximoTempoAtrasEmMinutos() {
+  var xhttp = new XMLHttpRequest();
+  xhttp.onreadystatechange = function() {
+      if(this.readyState == 4 && this.status == 200) {
+				var maximoMinutosAtras = parseInt(this.responseText);
+        MAXIMO_SEGUNDOS_ATRAS = maximoMinutosAtras * 60;
+				console.warn("Exibindo dados de no máximo " + maximoMinutosAtras + " atrás.")
+     }
+  };
+  xhttp.open("GET", "back-end/public/maximo-tempo-atras-em-minutos", true);
+  xhttp.send();
+}
+
+function calcularValorGrafico(minimoGrafico, maximoGrafico, segAtras){
+	// Descobrindo o intervalor gráfico.
+	var intervaloGrafico = maximoGrafico - minimoGrafico;
+	// Convertendo de seg para valor gráfico.
+	var valor = (segAtras * intervaloGrafico) / MAXIMO_SEGUNDOS_ATRAS;
+	// Invertendo porque queremos que zero seja o maior.
+	valor = intervaloGrafico - valor;
+	// Aplicando exponenciação para fazer melhor decaimento.
+	valor = Math.pow(valor/(intervaloGrafico/Math.sqrt(Math.sqrt(intervaloGrafico))), 4);
+	// Adicionando o valor mínimo gráfico.
+	valor += minimoGrafico;
+	return valor;
 }
