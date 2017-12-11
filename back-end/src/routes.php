@@ -44,14 +44,12 @@ $app->get('/linha/[{id}]', function (Request $request, Response $response, array
     "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro " . 
     "WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " . MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " AND linha = :linha " .
     " ORDER BY datahora";
-  $this->logger->info($sqlConsultaLinha);
   $stmt = $conn->prepare($sqlConsultaLinha);
   $stmt->bindParam("linha", $id);
   $stmt->execute();
   $pontos = array();
   
   foreach ($stmt->fetchAll() as $row) {
-    $this->logger->info($row["segAtras"]);
     $pontos[] = criarPonto($row["segAtras"], floatval($row["lat"]), floatval($row["lng"]));
   }
   
@@ -99,6 +97,10 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
   $linhaExiste = $stmt->fetchColumn();
   
   if($linhaExiste){
+    $ajustados = snapToRoad($lat, $lng);
+    $lat = $ajustados["lat"];
+    $lng = $ajustados["lng"];
+    
     $sqlInsert = "INSERT INTO rastro (datahora, linha, lat, lng) values (NOW(), :linha, :lat, :lng) ";
     $stmt = $conn->prepare($sqlInsert);
     $stmt->bindParam("linha", $linha);
@@ -114,3 +116,63 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
   }
   return $response;
 });
+
+function snapToRoad($lat, $lng){
+  $resultadoJson = callAPI("GET", 
+    "https://roads.googleapis.com/v1/snapToRoads",
+     array("path"=>$lat . "," . $lng, "key"=>"AIzaSyAFtfPIazR_sUwJYjYEDzALPJvdQ50xPd4"));
+  $resultado = json_decode($resultadoJson);
+  
+  if(count($resultado->snappedPoints) > 0){
+    $lat = $resultado->snappedPoints[0]->location->latitude;
+    $lng = $resultado->snappedPoints[0]->location->longitude;
+  }
+  
+  return array("lat"=>$lat, "lng"=>$lng);
+}
+
+$app->get('/teste', function (Request $request, Response $response, array $args) {
+  $resultado = callAPI("GET", 
+    "https://roads.googleapis.com/v1/snapToRoads",
+     array("path"=>"-35.27801,149.12958", "key"=>"AIzaSyAFtfPIazR_sUwJYjYEDzALPJvdQ50xPd4"));
+  $obj = json_decode($resultado);
+  $response->getBody()->write($obj->snappedPoints[0]->location->latitude . ", " . $obj->snappedPoints[0]->location->longitude);
+  return $response;
+});
+
+
+// Method: POST, PUT, GET etc
+// Data: array("param" => "value") ==> index.php?param=value
+
+function callAPI($method, $url, $data = false){
+    $curl = curl_init();
+
+    switch ($method)
+    {
+        case "POST":
+            curl_setopt($curl, CURLOPT_POST, 1);
+
+            if ($data)
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+            break;
+        case "PUT":
+            curl_setopt($curl, CURLOPT_PUT, 1);
+            break;
+        default:
+            if ($data)
+                $url = sprintf("%s?%s", $url, http_build_query($data));
+    }
+
+    // Optional Authentication:
+    //curl_setopt($curl, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
+    //curl_setopt($curl, CURLOPT_USERPWD, "username:password");
+
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+
+    $result = curl_exec($curl);
+
+    curl_close($curl);
+
+    return $result;
+}
