@@ -21,6 +21,35 @@ $app->get('/maximo-tempo-atras-em-minutos', function (Request $request, Response
   return $response;
 });
 
+$app->get('/linhas', function (Request $request, Response $response, array $args) {
+  $q = $request->getQueryParam("q");
+  $q = filter_var($q, FILTER_SANITIZE_STRING);
+  $q = str_replace("%", "", trim($q));
+  
+  if(validarParametro($q)){
+    $conn = criarConexao($this);
+
+    $sql = "SELECT id "
+      . "FROM linha "
+      . "WHERE id like :q "
+      . "order by length(id), id "
+      . "limit 0, 5";
+    $stmt = $conn->prepare($sql);
+    $q = $q . "%";
+    $stmt->bindParam("q", $q, PDO::PARAM_STR, 7);
+    $stmt->execute();
+    $resultSet = $stmt->fetchAll();
+    $linhas = array_column($resultSet, 0);
+  }
+  
+  $response = $response->withJson($linhas);
+  return $response;
+});
+
+function validarParametro($q){
+  return ($q != null && $q != "");
+}
+
 $app->get('/linhas-ativas', function (Request $request, Response $response, array $args) {
     
   $conn = criarConexao($this);
