@@ -11,6 +11,7 @@ function esconder(elemento){
 function mostrarStatusEspera(){
   esconder("semResultado");
   esconder("resultado");
+  esconder("panelBotaoAtualizar");
   mostrar("statusEspera");
 }
 
@@ -18,12 +19,14 @@ function mostrarResultado(){
   esconder("semResultado");
   esconder("statusEspera");
   mostrar("resultado");
+  mostrar("panelBotaoAtualizar");
 }
 
 function mostrarSemResultado(){
   esconder("statusEspera");
   esconder("resultado");
   mostrar("semResultado");
+  mostrar("panelBotaoAtualizar");
 }
 
 function buscarLinhasAtivas() {
