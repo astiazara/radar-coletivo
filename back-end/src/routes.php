@@ -33,7 +33,7 @@ $app->get('/linhas', function (Request $request, Response $response, array $args
       . "FROM linha "
       . "WHERE id like :q "
       . "order by length(id), id "
-      . "limit 0, 5";
+      . "limit 0, 6";
     $stmt = $conn->prepare($sql);
     $q = $q . "%";
     $stmt->bindParam("q", $q, PDO::PARAM_STR, 7);

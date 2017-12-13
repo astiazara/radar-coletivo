@@ -1,24 +1,21 @@
 "use strict"
 
 function pesquisarLinhas(textoDigitado){
-  var linhas = buscaLinhas(textoDigitado);
-  apresentarLinhas(linhas);
-}
-
-function buscaLinhas(textoDigitado){
   if(textoDigitado == null ||
     textoDigitado === ""){
-    return [];
+    apresentarLinhas([]);
+		return;
   }
   
-  textoDigitado = textoDigitado.toLowerCase();
-  if(textoDigitado.startsWith("t")){
-    return ["T1", "T2", "T5", "T11"];
-  } else if(textoDigitado.startsWith("1")){
-    return ["178", "188"];
-  } else {
-    return [];
-  }
+  var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+			if (this.readyState == 4 && this.status == 200) {
+				var linhas = JSON.parse(this.responseText);
+  			apresentarLinhas(linhas);
+			}
+	};
+	xmlhttp.open("GET", "back-end/public/linhas?q=" + textoDigitado, true);
+	xmlhttp.send();
 }
 
 function apresentarLinhas(linhasAtivas){
