@@ -15,6 +15,11 @@ use Slim\Http\Response;
 
 define("MAXIMO_TEMPO_ATRAS_EM_MINUTOS", 5);
 
+function limparDadosAntigos($conexao){
+  if(random_int(0, 3) == 0){
+    $conexao->exec("DELETE FROM rastro WHERE TIMESTAMPDIFF(HOUR, datahora, NOW()) > 12");
+  }
+}
 
 $app->get('/maximo-tempo-atras-em-minutos', function (Request $request, Response $response, array $args) {
   $response->getBody()->write(MAXIMO_TEMPO_ATRAS_EM_MINUTOS);
@@ -27,14 +32,14 @@ $app->get('/linhas', function (Request $request, Response $response, array $args
   $q = str_replace("%", "", trim($q));
   
   if(validarParametro($q)){
-    $conn = criarConexao($this);
+    $conexao = criarConexao($this);
 
     $sql = "SELECT id "
       . "FROM linha "
       . "WHERE id like :q "
       . "order by length(id), id "
       . "limit 0, 6";
-    $stmt = $conn->prepare($sql);
+    $stmt = $conexao->prepare($sql);
     $q = $q . "%";
     $stmt->bindParam("q", $q, PDO::PARAM_STR, 7);
     $stmt->execute();
@@ -52,15 +57,16 @@ function validarParametro($q){
 
 $app->get('/linhas-ativas', function (Request $request, Response $response, array $args) {
     
-  $conn = criarConexao($this);
-
+  $conexao = criarConexao($this);
+  limparDadosAntigos($conexao);
+  
   $sqlConsultaLinhas = 
     "SELECT distinct linha FROM rastro WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " .
     MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " ORDER BY linha";
-  $stmt = $conn->prepare($sqlConsultaLinhas);
+  $stmt = $conexao->prepare($sqlConsultaLinhas);
   $stmt->execute();
   $resultSet = $stmt->fetchAll();
-
+  
   $response = $response->withJson(array_column($resultSet, 0));
   return $response;
 });
@@ -68,12 +74,12 @@ $app->get('/linhas-ativas', function (Request $request, Response $response, arra
 $app->get('/linha/[{id}]', function (Request $request, Response $response, array $args) {
   $id = $args['id'];
 
-  $conn = criarConexao($this);
+  $conexao = criarConexao($this);
   $sqlConsultaLinha = 
     "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro " . 
     "WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " . MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " AND linha = :linha " .
     " ORDER BY datahora";
-  $stmt = $conn->prepare($sqlConsultaLinha);
+  $stmt = $conexao->prepare($sqlConsultaLinha);
   $stmt->bindParam("linha", $id);
   $stmt->execute();
   $pontos = array();
@@ -117,10 +123,10 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
   $lat =  filter_var($data['lat'], FILTER_SANITIZE_STRING);
   $lng =  filter_var($data['lng'], FILTER_SANITIZE_STRING);
   
-  $conn = criarConexao($this);
+  $conexao = criarConexao($this);
   
   $sqlConsultaLinha = "SELECT COUNT(*) FROM linha WHERE id = :linha";
-  $stmt = $conn->prepare($sqlConsultaLinha);
+  $stmt = $conexao->prepare($sqlConsultaLinha);
   $stmt->bindParam("linha", $linha);
   $stmt->execute();
   $linhaExiste = $stmt->fetchColumn();
@@ -131,7 +137,7 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
     $lng = $ajustados["lng"];
     
     $sqlInsert = "INSERT INTO rastro (datahora, linha, lat, lng) values (NOW(), :linha, :lat, :lng) ";
-    $stmt = $conn->prepare($sqlInsert);
+    $stmt = $conexao->prepare($sqlInsert);
     $stmt->bindParam("linha", $linha);
     $stmt->bindParam("lat", $lat);
     $stmt->bindParam("lng", $lng);
