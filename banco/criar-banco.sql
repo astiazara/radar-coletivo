@@ -33,15 +33,16 @@ CREATE TABLE IF NOT EXISTS linha (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela 'rastro'
+-- Estrutura para tabela `rastro`
 --
 
-CREATE TABLE IF NOT EXISTS rastro (
-  datahora datetime NOT NULL,
-  linha varchar(7) NOT NULL,
-  lat varchar(30) NOT NULL,
-  lng varchar(30) NOT NULL,
-  KEY datahora (datahora)
+CREATE TABLE IF NOT EXISTS `rastro` (
+  `datahora` datetime NOT NULL,
+  `linha` varchar(7) NOT NULL,
+  `lat` varchar(30) NOT NULL,
+  `lng` varchar(30) NOT NULL,
+  KEY `datahora` (`datahora`),
+  KEY `linha` (`linha`)
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 -- --------------------------------------------------------
