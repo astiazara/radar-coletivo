@@ -1,9 +1,60 @@
 "use strict"
 
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+//-------------------------------
+
+var linhasRecentes = [];
+
+function lerEApresentarLinhasRecentes(){
+	lerLinhasRecentes();
+	apresentarLinhas(linhasRecentes);
+}
+
+function lerLinhasRecentes(){
+	var cookie = getCookie("parada");
+	if(cookie !== ""){
+		linhasRecentes = cookie.split("|");
+	}
+}
+
+function adicionarLinhaRecente(linha){
+	if(linhasRecentes.find(function(valor){ return valor === linha;})){
+		return;
+	}
+	
+	if(linhasRecentes.push(linha) === 7){
+		linhasRecentes.shift();
+	}
+	
+	setCookie("parada", linhasRecentes.join("|"), 30 * 4);
+}
+
 function pesquisarLinhas(textoDigitado){
   if(textoDigitado == null ||
     textoDigitado === ""){
-    apresentarLinhas([]);
+    apresentarLinhas(linhasRecentes);
 		return;
   }
   
@@ -32,6 +83,8 @@ function criarBotao(linha){
 }
 
 function enviarLinha(botao, linha){
+	adicionarLinhaRecente(linha);
+	
   botao.disabled = true;
   botao.firstElementChild.className = "fa fa-refresh fa-2x fa-spin";
   
