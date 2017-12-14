@@ -1,12 +1,5 @@
 "use strict"
 
-var linha;
-var contadorRegressivoTempo;
-var relogio1Segundo;
-var txtCronometro;
-var maximoTempo;
-
-
 function mostrar(elemento){
   document.getElementById(elemento).style.display = "block";
 }
@@ -22,6 +15,14 @@ function mostrarSe(elemento, se){
     esconder(elemento);
   }
 }
+
+//--- Minhas
+
+var linha;
+var contadorRegressivoTempo;
+var relogio1Segundo;
+var txtCronometro;
+var maximoTempo;
 
 function iniciarSeValido(){
   parar();

@@ -23,7 +23,19 @@ function getCookie(cname) {
     return "";
 }
 
-//-------------------------------
+//--- Terceiros
+
+function mostrar(elemento){
+  document.getElementById(elemento).style.display = "block";
+}
+
+function mostrarErro(status, textoErro){
+	document.getElementById("textoErro").innerHTML = "Erro ao processar requisição. Status: " + 
+		status + " Resposta do servidor: " + textoErro;
+	mostrar("erro");
+}
+
+//--- Minhas
 
 var linhasRecentes = [];
 var textoLimpo = false;
@@ -114,11 +126,13 @@ function enviarLinha(botao, linha){
           botao.firstElementChild.style="color:green";
           botao.disabled = false;
           setTimeout(function(){ botao.firstElementChild.className = "fa fa-map-marker fa-2x";}, 10000);
-       }
+       } else if(this.readyState == 4 && this.status != 201){
+					mostrarErro(this.status, this.responseText); 
+			 }
     };
     xhttp.open("POST", "back-end/public/linhas-ativas", true);
     xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("linha=" + linha + "&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude);
+    xhttp.send("linha=" + linha + "&caminho=" + position.coords.latitude + "," + position.coords.longitude);
   });
 }
 

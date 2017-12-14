@@ -85,7 +85,7 @@ function existeLinha(){
 
 function apresentarLinha(){
 	var antigos = obterFeatures();
-	map.data.loadGeoJson('back-end/public/linha/' + obterLinha(), 
+	map.data.loadGeoJson('back-end/public/linha-ativa/' + obterLinha(), 
 											 null,
 											 function(featuresNovas){ 
 												setTimeout(function(){

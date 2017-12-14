@@ -8,6 +8,8 @@ function esconder(elemento){
   document.getElementById(elemento).style.display = "none";
 }
 
+//--- Minhas
+
 function mostrarStatusEspera(){
   esconder("semResultado");
   esconder("resultado");

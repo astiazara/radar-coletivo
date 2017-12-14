@@ -28,7 +28,7 @@
 				<a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
 				<a href="linhas-ativas.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
 				<a href="to-no-bus.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-crosshairs fa-fw"></i>  Informar do Ônibus</a>
-				<a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-map-marker fa-fw"></i>  Informar da Parada</a>
+				<a href="to-na-parada.html" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-map-marker fa-fw"></i>  Informar da Parada</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  O povo quer saber</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-question-circle-o fa-fw"></i>  O que é isso?</a>
 			</div>
@@ -41,6 +41,12 @@
 		<div class="w3-main" style="margin-left:300px;margin-top:43px;">
 
 			<div class="w3-container w3-padding">
+				
+				<div id="erro" class="w3-panel w3-card w3-pale-red w3-display-container" style="display:none">
+					<span onclick="this.parentElement.style.display='none'"
+					class="w3-button w3-red w3-large w3-display-topright"><b>x</b></span>
+					<p id="textoErro">Erro</p>
+				</div>
 				
 				<div class="w3-container">
 					

@@ -26,7 +26,7 @@
 			</div>
 			<div class="w3-bar-block">
 				<a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-				<a href="#" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
+				<a href="linhas-ativas.html" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
 				<a href="to-no-bus.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-crosshairs fa-fw"></i>  Informar do Ônibus</a>
 				<a href="to-na-parada.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-map-marker fa-fw"></i>  Informar da Parada</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  O povo quer saber</a>
@@ -50,14 +50,10 @@
 
 					<div id="resultado" class="w3-bar"></div>
 
-					<div id="semResultado" class="w3-panel w3-center" style="display: none">
-						<div class="w3-center">
-							<i class="fa fa-frown-o fa-4x"></i>
-						</div>
-						<p>Sem informação de linhas no momento.</p>
-					</div>
+					<h5 id="semResultado" style="display: none">Sem informação de linhas no momento.</h5>
 					
-					<div id="panelBotaoAtualizar" class="w3-panel w3-padding w3-center">
+					<br>
+					<div id="panelBotaoAtualizar" class="w3-bar">
 						<button onclick="buscarLinhasAtivas()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
 							<i class="fa fa-refresh fa-2x"></i>
 						</button>

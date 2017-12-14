@@ -14,6 +14,7 @@ use Slim\Http\Response;
 // });
 
 define("MAXIMO_TEMPO_ATRAS_EM_MINUTOS", 5);
+define("LIMITE_PONTOS_SNAP", 100);
 
 function limparDadosAntigos($conexao){
   if(random_int(0, 3) == 0){
@@ -27,11 +28,10 @@ $app->get('/maximo-tempo-atras-em-minutos', function (Request $request, Response
 });
 
 $app->get('/linhas', function (Request $request, Response $response, array $args) {
-  $q = $request->getQueryParam("q");
-  $q = filter_var($q, FILTER_SANITIZE_STRING);
+  $q = filter_var($request->getQueryParam("q"), FILTER_SANITIZE_STRING);
   $q = str_replace("%", "", trim($q));
   
-  if(validarParametro($q)){
+  if(!ehStringVazia($q)){
     $conexao = criarConexao($this);
 
     $sql = "SELECT id "
@@ -51,8 +51,8 @@ $app->get('/linhas', function (Request $request, Response $response, array $args
   return $response;
 });
 
-function validarParametro($q){
-  return ($q != null && $q != "");
+function ehStringVazia($q){
+  return ($q == null || $q == "");
 }
 
 $app->get('/linhas-ativas', function (Request $request, Response $response, array $args) {
@@ -71,24 +71,29 @@ $app->get('/linhas-ativas', function (Request $request, Response $response, arra
   return $response;
 });
 
-$app->get('/linha/[{id}]', function (Request $request, Response $response, array $args) {
-  $id = $args['id'];
+$app->get('/linha-ativa/[{id}]', function (Request $request, Response $response, array $args) {
+  $id = filter_var($args['id'], FILTER_SANITIZE_STRING);
 
-  $conexao = criarConexao($this);
-  $sqlConsultaLinha = 
-    "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro " . 
-    "WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " . MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " AND linha = :linha " .
-    " ORDER BY datahora";
-  $stmt = $conexao->prepare($sqlConsultaLinha);
-  $stmt->bindParam("linha", $id);
-  $stmt->execute();
-  $pontos = array();
-  
-  foreach ($stmt->fetchAll() as $row) {
-    $pontos[] = criarPonto($row["segAtras"], floatval($row["lat"]), floatval($row["lng"]));
+  if(!ehStringVazia($id)){    
+    $conexao = criarConexao($this);
+    $sqlConsultaLinha = 
+      "SELECT TIMESTAMPDIFF(SECOND, datahora, NOW()) AS segAtras, lat, lng FROM rastro " . 
+      "WHERE TIMESTAMPDIFF(MINUTE, datahora, NOW()) <= " . MAXIMO_TEMPO_ATRAS_EM_MINUTOS . " AND linha = :linha " .
+      " ORDER BY datahora";
+    $stmt = $conexao->prepare($sqlConsultaLinha);
+    $stmt->bindParam("linha", $id);
+    $stmt->execute();
+    $pontos = array();
+
+    foreach ($stmt->fetchAll() as $row) {
+      $pontos[] = criarPonto($row["segAtras"], floatval($row["lat"]), floatval($row["lng"]));
+    }
+
+    $response = $response->withJson(criarColecaoPontos($pontos));
+  } else {
+    $response->getBody()->write("Necessario id");
+    $response = $response->withStatus(400);
   }
-  
-  $response = $response->withJson(criarColecaoPontos($pontos));
   return $response;
 });
 
@@ -119,9 +124,19 @@ function criarConexao($isso){
 
 $app->post('/linhas-ativas', function (Request $request, Response $response, array $args) {
   $data = $request->getParsedBody();
+  
   $linha = filter_var($data['linha'], FILTER_SANITIZE_STRING);
-  $lat =  filter_var($data['lat'], FILTER_SANITIZE_STRING);
-  $lng =  filter_var($data['lng'], FILTER_SANITIZE_STRING);
+  $caminhoString =  filter_var($data['caminho'], FILTER_SANITIZE_STRING);
+  
+  if(ehStringVazia($linha) || ehStringVazia($caminhoString)){
+    $response->getBody()->write("Necessario parametros linha e caminho.");
+    return $response->withStatus(400);
+  }
+  
+  if(parseCaminho($caminhoString) == null){
+    $response->getBody()->write("Caminho mal formado.");
+    return $response->withStatus(400);
+  }
   
   $conexao = criarConexao($this);
   
@@ -132,9 +147,9 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
   $linhaExiste = $stmt->fetchColumn();
   
   if($linhaExiste){
-    $ajustados = snapToRoad($lat, $lng);
-    $lat = $ajustados["lat"];
-    $lng = $ajustados["lng"];
+    $ajustado = snapToRoad($this, $caminhoString);
+    $lat = $ajustado["lat"];
+    $lng = $ajustado["lng"];
     
     $sqlInsert = "INSERT INTO rastro (datahora, linha, lat, lng) values (NOW(), :linha, :lat, :lng) ";
     $stmt = $conexao->prepare($sqlInsert);
@@ -152,27 +167,68 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
   return $response;
 });
 
-function snapToRoad($lat, $lng){
+function parseCaminho($caminhoString){
+  if(ehStringVazia($caminhoString)){
+    return null;
+  }
+  
+  $pontos = explode("|", $caminhoString);
+  $totalPontos = count($pontos);
+  if($totalPontos == 0 || $totalPontos > LIMITE_PONTOS_SNAP){
+    return null;
+  }
+  
+  $caminho = array();
+  foreach($pontos as $pontoString) {
+    if(ehStringVazia($pontoString)){
+      return null;
+    }
+
+    $pontos = explode(",", $pontoString);
+    $totalCoordenadas = count($pontos);
+    if($totalCoordenadas != 2){
+      return null;
+    }
+    
+    array_push($caminho, array("lat" => $pontos[0], "lng" => $pontos[1]));
+  }
+  
+  return $caminho;
+}
+
+function snapToRoad($isso, $caminhoString){
   $resultadoJson = callAPI("GET", 
     "https://roads.googleapis.com/v1/snapToRoads",
-     array("path"=>$lat . "," . $lng, "key"=>"AIzaSyAFtfPIazR_sUwJYjYEDzALPJvdQ50xPd4"));
+     array("path"=>$caminhoString, "key"=>"AIzaSyAFtfPIazR_sUwJYjYEDzALPJvdQ50xPd4"));
   $resultado = json_decode($resultadoJson);
   
-  if(count($resultado->snappedPoints) > 0){
-    $lat = $resultado->snappedPoints[0]->location->latitude;
-    $lng = $resultado->snappedPoints[0]->location->longitude;
+  $totalSnappedPoints = count($resultado->snappedPoints);
+  if($totalSnappedPoints > 0){
+    $ultimo = $totalSnappedPoints - 1;
+    $lat = $resultado->snappedPoints[$ultimo]->location->latitude;
+    $lng = $resultado->snappedPoints[$ultimo]->location->longitude;
+  } else {
+    $isso->logger->info("Falhou snaptoRoad");
+    $caminho = parseCaminho($caminhoString);
+    $ultimo = count($caminho) - 1;
+    $lat = $caminho[$ultimo];
+    $lng = $caminho[$ultimo];
   }
   
   return array("lat"=>$lat, "lng"=>$lng);
 }
 
 $app->get('/teste', function (Request $request, Response $response, array $args) {
-  $resultado = callAPI("GET", 
-    "https://roads.googleapis.com/v1/snapToRoads",
-     array("path"=>"-35.27801,149.12958", "key"=>"AIzaSyAFtfPIazR_sUwJYjYEDzALPJvdQ50xPd4"));
-  $obj = json_decode($resultado);
-  $response->getBody()->write($obj->snappedPoints[0]->location->latitude . ", " . $obj->snappedPoints[0]->location->longitude);
-  return $response;
+  $c = filter_var($request->getQueryParam("c"), FILTER_SANITIZE_STRING);
+  
+  if($c == null || $c == ""){
+    $response->getBody()->write("Necessario parametro c");
+    return $response->withStatus(400);
+  } else {
+    $ajustado = snapToRoad($this, $c);
+    $response->getBody()->write($ajustado["lat"] . ", " . $ajustado["lng"]);
+    return $response;
+  }
 });
 
 
