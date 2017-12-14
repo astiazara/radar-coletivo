@@ -26,6 +26,8 @@ function getCookie(cname) {
 //-------------------------------
 
 var linhasRecentes = [];
+var textoLimpo = false;
+var idDigitacaoTimeout;
 
 function lerEApresentarLinhasRecentes(){
 	lerLinhasRecentes();
@@ -51,18 +53,33 @@ function adicionarLinhaRecente(linha){
 	setCookie("parada", linhasRecentes.join("|"), 30 * 4);
 }
 
+function onKeyUp(){
+	clearTimeout(idDigitacaoTimeout);
+	idDigitacaoTimeout = setTimeout(function(){
+		pesquisarLinhas(document.getElementById("linhaDigitada").value);
+	}, 600);
+}
+
+function onKeyDown(){
+	clearTimeout(idDigitacaoTimeout);
+}
+
 function pesquisarLinhas(textoDigitado){
   if(textoDigitado == null ||
     textoDigitado === ""){
+		textoLimpo = true;
     apresentarLinhas(linhasRecentes);
 		return;
   }
   
+	textoLimpo = false;
   var xmlhttp = new XMLHttpRequest();
 	xmlhttp.onreadystatechange = function() {
-			if (this.readyState == 4 && this.status == 200) {
-				var linhas = JSON.parse(this.responseText);
-  			apresentarLinhas(linhas);
+			if(this.readyState == 4 && this.status == 200) {
+				if(!textoLimpo){
+					var linhas = JSON.parse(this.responseText);
+					apresentarLinhas(linhas);
+				}
 			}
 	};
 	xmlhttp.open("GET", "back-end/public/linhas?q=" + textoDigitado, true);
