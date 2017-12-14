@@ -58,7 +58,7 @@ function adicionarLinhaRecente(linha){
 		return;
 	}
 	
-	if(linhasRecentes.push(linha) === 7){
+	if(linhasRecentes.push(linha) > 6){
 		linhasRecentes.shift();
 	}
 	

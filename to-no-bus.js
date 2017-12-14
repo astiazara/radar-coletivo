@@ -23,6 +23,7 @@ var contadorRegressivoTempo;
 var relogio1Segundo;
 var txtCronometro;
 var maximoTempo;
+var caminho = [];
 
 function iniciarSeValido(){
   parar();
@@ -122,6 +123,8 @@ function solicitarGeoLocalizacaoNovamente(){
 }
 
 function enviarRastreamento(position){
+	adicionarPonto(position.coords.latitude, position.coords.longitude);
+	
 	var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
       if(this.readyState == 4 && this.status == 201) {
@@ -130,7 +133,23 @@ function enviarRastreamento(position){
   };
   xhttp.open("POST", "back-end/public/linhas-ativas", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhttp.send("linha=" + linha + "&lat=" + position.coords.latitude + "&lng=" + position.coords.longitude); 
+	xhttp.send("linha=" + linha + "&caminho=" + toStringCaminho()); 
+}
+
+function adicionarPonto(lat, lng){
+	if(caminho.push({"lat": lat, "lng": lng}) > 100){
+		caminho.shift();
+	}
+}
+
+function toStringCaminho(){
+	var texto = "";
+	var separador = "";
+	caminho.forEach(function(item, index) {
+    	texto += separador + item.lat + "," + item.lng; 
+			separador = "|";
+		});
+	return texto;
 }
 
 function apresentarResposta(responseText){
