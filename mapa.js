@@ -43,7 +43,7 @@ function initMap() {
 	buscarMaximoTempoAtrasEmMinutos();
 	
 	map = new google.maps.Map(document.getElementById('map'), {
-		zoom: 16,
+		zoom: 15,
 		center: {lat: -30.040301, lng: -51.228566}
 	});
 		
@@ -123,7 +123,7 @@ function getCircle(segundosAtras) {
 		path: google.maps.SymbolPath.CIRCLE,
 		fillColor: 'red',
 		fillOpacity: 1,
-		scale: calcularValorGrafico(4, 16, segundosAtras),
+		scale: calcularValorGrafico(2, 20, segundosAtras),
 		strokeColor: 'red',
 		strokeWeight: 0.0
 	};
@@ -149,7 +149,7 @@ function buscarMaximoTempoAtrasEmMinutos() {
       if(this.readyState == 4 && this.status == 200) {
 				var maximoMinutosAtras = parseInt(this.responseText);
         MAXIMO_SEGUNDOS_ATRAS = maximoMinutosAtras * 60;
-				console.warn("Exibindo dados de no máximo " + maximoMinutosAtras + " atrás.")
+				console.warn("Exibindo dados de no máximo " + maximoMinutosAtras + " minuto(s) atrás.")
      }
   };
   xhttp.open("GET", "back-end/public/maximo-tempo-atras-em-minutos", true);

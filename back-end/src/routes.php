@@ -13,7 +13,7 @@ use Slim\Http\Response;
 //     return $this->renderer->render($response, 'index.phtml', $args);
 // });
 
-define("MAXIMO_TEMPO_ATRAS_EM_MINUTOS", 5);
+define("MAXIMO_TEMPO_ATRAS_EM_MINUTOS", 3);
 define("LIMITE_PONTOS_SNAP", 100);
 
 function limparDadosAntigos($conexao){
