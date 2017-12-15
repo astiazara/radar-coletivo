@@ -1,5 +1,30 @@
 "use strict"
 
+function setCookie(cname, cvalue, exdays) {
+    var d = new Date();
+    d.setTime(d.getTime() + (exdays*24*60*60*1000));
+    var expires = "expires="+ d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires;
+}
+
+function getCookie(cname) {
+    var name = cname + "=";
+    var decodedCookie = decodeURIComponent(document.cookie);
+    var ca = decodedCookie.split(';');
+    for(var i = 0; i <ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) === 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+
+//--- Terceiros
+
 function mostrar(elemento){
   document.getElementById(elemento).style.display = "block";
 }
@@ -18,50 +43,91 @@ function mostrarSe(elemento, se){
 
 //--- Minhas
 
-var linha;
+var linhaAtual;
 var contadorRegressivoTempo;
 var relogio1Segundo;
 var txtCronometro;
 var maximoTempo;
 var caminho = [];
+var linhasRecentes = [];
+var textoLimpo = false;
+var idDigitacaoTimeout;
 
-function iniciarSeValido(){
-  parar();
-  if(validar()){
-    iniciar();
+function lerEApresentarLinhasRecentes(){
+	lerLinhasRecentes();
+	apresentarLinhas(linhasRecentes);
+}
+
+function lerLinhasRecentes(){
+	var cookie = getCookie("bus");
+	if(cookie !== ""){
+		linhasRecentes = cookie.split("|");
+	}
+}
+
+function adicionarLinhaRecente(linha){
+	if(linhasRecentes.find(function(valor){ return valor === linha;})){
+		return;
+	}
+	
+	if(linhasRecentes.push(linha) > 6){
+		linhasRecentes.shift();
+	}
+	
+	setCookie("bus", linhasRecentes.join("|"), 30 * 4);
+}
+
+function onKeyUp(){
+	clearTimeout(idDigitacaoTimeout);
+	idDigitacaoTimeout = setTimeout(function(){
+		pesquisarLinhas(document.getElementById("linhaDigitada").value);
+	}, 600);
+}
+
+function onKeyDown(){
+	clearTimeout(idDigitacaoTimeout);
+}
+
+function pesquisarLinhas(textoDigitado){
+  if(textoDigitado == null ||
+    textoDigitado === ""){
+		textoLimpo = true;
+    apresentarLinhas(linhasRecentes);
+		return;
   }
+  
+	textoLimpo = false;
+  var xmlhttp = new XMLHttpRequest();
+	xmlhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 200) {
+				if(!textoLimpo){
+					var linhas = JSON.parse(this.responseText);
+					apresentarLinhas(linhas);
+				}
+			}
+	};
+	xmlhttp.open("GET", "back-end/public/linhas?q=" + textoDigitado, true);
+	xmlhttp.send();
 }
 
-function validar(){
-  var txtLinhaDigitada = document.getElementById("linhaDigitada");
-	linha = txtLinhaDigitada.value;
-	
-	if(linha === null || linha === ""){
-		txtLinhaDigitada.focus();
-		return false;
-	}
-	
-	if(linha.length < 2){
-		mostrarAviso("Isto não parece ser um número de linha.");
-		return false;
-	}
-	
-	linha = linha.toUpperCase();
-  maximoTempo = 60 * document.getElementById("maximoTempo").value;
-	esconderAviso();
-  return true;
+function apresentarLinhas(linhas){
+  var botoes = "";
+  for(var i in linhas) { 
+    botoes += criarBotao(linhas[i]);
+  }
+  document.getElementById("resultado").innerHTML = botoes;
 }
 
-function mostrarAviso(textoAviso){
-	document.getElementById("textoAviso").innerHTML = textoAviso;
-	mostrar("aviso");
-}
-function esconderAviso(){
-	esconder("aviso");
+function criarBotao(linha){
+  return "<button onclick=\"iniciar('" + linha + "')\"" + 
+    "\" class=\"w3-bar-item w3-button w3-round-large w3-white w3-border\" style=\"width:100px\"><i class=\"fa fa-crosshairs fa-2x\"></i><br><b>" + linha + "</b></button>";
 }
 
-function iniciar(){
-  document.getElementById("tituloRastreando").innerHTML = "Rastreando linha " + linha;
+function iniciar(linha){
+	adicionarLinhaRecente(linha);
+	maximoTempo = 60 * document.getElementById("maximoTempo").value;
+	linhaAtual = linha;
+  document.getElementById("tituloRastreando").innerHTML = "Rastreando linha " + linhaAtual;
   
   prepararCronometro();
   
@@ -133,7 +199,7 @@ function enviarRastreamento(position){
   };
   xhttp.open("POST", "back-end/public/linhas-ativas", true);
   xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-	xhttp.send("linha=" + linha + "&caminho=" + toStringCaminho()); 
+	xhttp.send("linha=" + linhaAtual + "&caminho=" + toStringCaminho()); 
 }
 
 function adicionarPonto(lat, lng){

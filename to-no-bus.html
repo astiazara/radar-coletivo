@@ -54,19 +54,12 @@
 						</select>
 
 						<h5>Qual o número da linha?</h5>
-						<input id="linhaDigitada" class="w3-input w3-border" type="text">
-
-						<div id="aviso" class="w3-panel w3-card w3-pale-yellow w3-display-container" style="display: none">
-							<p id="textoAviso">Aviso.</p>
-						</div>
+						<input id="linhaDigitada" class="w3-input w3-border" type="text" onkeyup="onKeyUp()" onkeydown="onKeyDown()">
 						
-						<div class="w3-panel w3-padding w3-center">
-							<button onclick="iniciarSeValido()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
-								<i class="fa fa-crosshairs fa-2x"></i>
-								<br/>
-								<b>Rastrear!</b>
-							</button>
-						</div>
+						<br/>
+						
+						<div id="resultado" class="w3-bar"></div>
+						
 					</div>
 					
 					<div id="rastreador" style="display: none">
@@ -112,6 +105,7 @@
 			}
 			
 			parar();
+			lerEApresentarLinhasRecentes();
 		</script>
 
 	</body>
