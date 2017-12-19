@@ -1,4 +1,3 @@
-"use strict"
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -40,6 +39,28 @@ function mostrarErro(status, textoErro){
 var linhasRecentes = [];
 var textoLimpo = false;
 var idDigitacaoTimeout;
+var map;
+
+function initMap() {	
+	map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 19,
+		center: {lat: -30.040301, lng: -51.228566},
+		disableDefaultUI: true
+	});
+	
+	centralizarNaPosicaoUsuario();
+}
+
+function centralizarNaPosicaoUsuario(){
+	if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(posicaoUsuarioRecebida);
+	}
+}
+
+function posicaoUsuarioRecebida(position) {
+	var centro = {lat: position.coords.latitude, lng: position.coords.longitude};
+	map.setCenter(centro);
+}
 
 function lerEApresentarLinhasRecentes(){
 	lerLinhasRecentes();

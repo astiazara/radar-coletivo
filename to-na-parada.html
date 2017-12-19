@@ -50,6 +50,10 @@
 				
 				<div class="w3-container">
 					
+					<h5>Em qual parada você está? <a href="#" onclick="centralizarNaPosicaoUsuario()">Usar o GPS</a></h5>
+					
+					<div id="map" style="height:250px"></div>
+					
 					<h5>Qual o número da linha?</h5>
 					<input id="linhaDigitada" class="w3-input w3-border" type="text" onkeyup="onKeyUp()" onkeydown="onKeyDown()">
 					
@@ -90,6 +94,10 @@
 			
 			lerEApresentarLinhasRecentes();
 			
+		</script>
+		
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0xwjZVTzqUY50IcMqiResDBJED_TU1AQ&callback=initMap">
 		</script>
 
 	</body>
