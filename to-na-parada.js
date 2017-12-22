@@ -40,6 +40,7 @@ var linhasRecentes = [];
 var textoLimpo = false;
 var idDigitacaoTimeout;
 var map;
+var marker;
 
 function initMap() {	
 	map = new google.maps.Map(document.getElementById('map'), {
@@ -47,6 +48,18 @@ function initMap() {
 		center: {lat: -30.040301, lng: -51.228566},
 		disableDefaultUI: true
 	});
+	
+	marker = new google.maps.Marker({
+    position: map.center,
+		animation: google.maps.Animation.DROP,
+		draggable: true,
+    map: map
+  });
+	
+	map.addListener('click', function(e) {
+		e.stop();
+    marker.setPosition(e.latLng);
+  });
 	
 	centralizarNaPosicaoUsuario();
 }
@@ -60,6 +73,7 @@ function centralizarNaPosicaoUsuario(){
 function posicaoUsuarioRecebida(position) {
 	var centro = {lat: position.coords.latitude, lng: position.coords.longitude};
 	map.setCenter(centro);
+	marker.setPosition(centro);
 }
 
 function lerEApresentarLinhasRecentes(){
@@ -137,24 +151,22 @@ function enviarLinha(botao, linha){
 	
   botao.disabled = true;
   botao.firstElementChild.className = "fa fa-refresh fa-2x fa-spin";
-  
-  navigator.geolocation.getCurrentPosition(function(position){
-    var xhttp = new XMLHttpRequest();
-    xhttp.onreadystatechange = function() {
-        if(this.readyState == 4 && this.status == 201) {
-          apresentarResposta(this.responseText);
-          botao.firstElementChild.className = "fa fa-check fa-2x";
-          botao.firstElementChild.style="color:green";
-          botao.disabled = false;
-          setTimeout(function(){ botao.firstElementChild.className = "fa fa-map-marker fa-2x";}, 10000);
-       } else if(this.readyState == 4 && this.status != 201){
-					mostrarErro(this.status, this.responseText); 
-			 }
-    };
-    xhttp.open("POST", "back-end/public/linhas-ativas", true);
-    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-    xhttp.send("linha=" + linha + "&caminho=" + position.coords.latitude + "," + position.coords.longitude);
-  });
+
+	var xhttp = new XMLHttpRequest();
+	xhttp.onreadystatechange = function() {
+			if(this.readyState == 4 && this.status == 201) {
+				apresentarResposta(this.responseText);
+				botao.firstElementChild.className = "fa fa-check fa-2x";
+				botao.firstElementChild.style="color:green";
+				botao.disabled = false;
+				setTimeout(function(){ botao.firstElementChild.className = "fa fa-map-marker fa-2x";}, 10000);
+		 } else if(this.readyState == 4 && this.status != 201){
+				mostrarErro(this.status, this.responseText); 
+		 }
+	};
+	xhttp.open("POST", "back-end/public/linhas-ativas", true);
+	xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+	xhttp.send("linha=" + linha + "&caminho=" + marker.position.lat() + "," + marker.position.lng());
 }
 
 function apresentarResposta(responseText){
