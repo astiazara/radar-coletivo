@@ -53,6 +53,20 @@ var linhasRecentes = [];
 var textoLimpo = false;
 var idDigitacaoTimeout;
 
+
+function apresentar(){
+	parar();
+	lerEApresentarMaximoTempo();
+	lerEApresentarLinhasRecentes();	
+}
+
+function lerEApresentarMaximoTempo(){
+	var valor = lerMaximoTempo();
+	if(valor !== ""){
+		document.getElementById("maximoTempo").value = valor;
+	}
+}
+
 function lerEApresentarLinhasRecentes(){
 	lerLinhasRecentes();
 	apresentarLinhas(linhasRecentes);
@@ -123,7 +137,11 @@ function criarBotao(linha){
 
 function iniciar(linha){
 	adicionarLinhaRecente(linha);
-	maximoTempo = 60 * document.getElementById("maximoTempo").value;
+	
+	var maximoTempoEmMinutos = document.getElementById("maximoTempo").value;
+	salvarMaximoTempo(maximoTempoEmMinutos);
+	
+	maximoTempo = 60 * maximoTempoEmMinutos;
 	linhaAtual = linha;
   document.getElementById("tituloRastreando").innerHTML = "Rastreando linha " + linhaAtual;
   
@@ -135,6 +153,13 @@ function iniciar(linha){
   mostrar("rastreador");
   
   navigator.geolocation.getCurrentPosition(recebeuGeoLocalizacao);
+}
+
+function salvarMaximoTempo(valor){
+	setCookie("maximoTempo", valor, 30 * 3);
+}
+function lerMaximoTempo(){
+	return getCookie("maximoTempo");
 }
 
 function prepararCronometro(){
