@@ -89,12 +89,10 @@ function lerLinhasRecentes(){
 }
 
 function adicionarLinhaRecente(linha){
-	if(linhasRecentes.find(function(valor){ return valor === linha;})){
-		return;
-	}
+	linhasRecentes = linhasRecentes.filter(function(valor){ return valor !== linha;});
 	
-	if(linhasRecentes.push(linha) > 6){
-		linhasRecentes.shift();
+	if(linhasRecentes.unshift(linha) > 6){
+		linhasRecentes.pop();
 	}
 	
 	setCookie("parada", linhasRecentes.join("|"), 30 * 4);
