@@ -65,13 +65,18 @@
 					<div id="rastreador" style="display: none">
 						<div class="w3-panel w3-padding w3-center">
 							<h2 id="tituloRastreando">Rastreando</h2>
+							
 							<h1 id="cronometro">00</h1>
+							
 							<button onclick="parar()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
 								<i class="fa fa-hand-stop-o fa-2x"></i>
 								<br/>
 								<b>Parar</b>
 							</button>
+						
 						</div>
+						
+						<div id="map" class="w3-border" style="height:250px"></div>
 					</div>
 					
 				</div>
@@ -105,6 +110,10 @@
 			}
 			
 			apresentar();
+		</script>
+
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0xwjZVTzqUY50IcMqiResDBJED_TU1AQ&callback=initMap">
 		</script>
 
 	</body>

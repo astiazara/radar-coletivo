@@ -1,4 +1,3 @@
-"use strict"
 
 function setCookie(cname, cvalue, exdays) {
     var d = new Date();
@@ -52,7 +51,38 @@ var caminho = [];
 var linhasRecentes = [];
 var textoLimpo = false;
 var idDigitacaoTimeout;
+var map;
+var marker;
 
+
+function initMap() {	
+	map = new google.maps.Map(document.getElementById('map'), {
+		zoom: 19,
+		center: {lat: -30.040301, lng: -51.228566},
+		disableDefaultUI: true
+	});
+	
+	marker = new google.maps.Marker({
+    position: map.center,
+		animation: google.maps.Animation.DROP,
+		draggable: false,
+    map: map
+  });
+	
+	centralizarNaPosicaoUsuario();
+}
+
+function centralizarNaPosicaoUsuario(){
+	if(navigator.geolocation) {
+		navigator.geolocation.getCurrentPosition(centralizarNaPosicaoUsuarioRecebida);
+	}
+}
+
+function centralizarNaPosicaoUsuarioRecebida(position) {
+	var centro = {lat: position.coords.latitude, lng: position.coords.longitude};
+	map.setCenter(centro);
+	marker.setPosition(centro);
+}
 
 function apresentar(){
 	parar();
@@ -199,6 +229,7 @@ function ativo(){
 
 function recebeuGeoLocalizacao(position) {
   if(ativo()){
+		centralizarNaPosicaoUsuarioRecebida(position);
     enviarRastreamento(position);
     solicitarGeoLocalizacaoNovamente();
 	}
