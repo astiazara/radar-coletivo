@@ -6,7 +6,6 @@
 	<link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-	<script src="linhas-ativas.js"></script>
 	<style>
 	html,body,h1,h2,h3,h4,h5 {font-family: "Raleway", sans-serif}
 	</style>
@@ -26,11 +25,11 @@
 			</div>
 			<div class="w3-bar-block">
 				<a href="#" class="w3-bar-item w3-button w3-padding-16 w3-hide-large w3-dark-grey w3-hover-black" onclick="w3_close()" title="close menu"><i class="fa fa-remove fa-fw"></i>  Fechar Menu</a>
-				<a href="linhas-ativas.html" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
+				<a href="linhas-ativas.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-bus fa-fw"></i>  Consultar Linhas</a>
 				<a href="to-no-bus.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-crosshairs fa-fw"></i>  Informar do Ônibus</a>
 				<a href="to-na-parada.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-map-marker fa-fw"></i>  Informar da Parada</a>
 				<a href="#" class="w3-bar-item w3-button w3-padding"><i class="fa fa-users fa-fw"></i>  O povo quer saber</a>
-				<a href="o-que-eh-isso.html" class="w3-bar-item w3-button w3-padding"><i class="fa fa-question-circle-o fa-fw"></i>  O que é isso?</a>
+				<a href="o-que-eh-isso.html" class="w3-bar-item w3-button w3-padding w3-blue"><i class="fa fa-question-circle-o fa-fw"></i>  O que é isso?</a>
 			</div>
 		</nav>
 
@@ -41,25 +40,29 @@
 		<div class="w3-main" style="margin-left:300px;margin-top:43px;">
 
 			<div class="w3-container w3-padding">
+					
+				<p>
+					Já deve ter acontecido de você estar esperando o ônibus na parada e alguém chegar e perguntar "Você viu se a linha tal já passou?".
+				</p>
+
+				<p>
+					O <strong>Radar Coletivo PoA</strong> é esta troca de informação na parceria, só que feita pela internet. Podendo assim alcançar muito mais pessoas.
+				</p>
+
+				<p>
+					Aqui é cidadão ajudando cidadão, sem apoio de governo ou empresa. Mas ninguém está excluído: todos podem acessar, informar e consultar.
+				</p>
 				
-				<div class="w3-container">
-					
-					<div id="statusEspera" class="w3-panel w3-center w3-padding-large">
-						<i class="fa fa-refresh fa-4x fa-spin"></i>
-					</div>
-
-					<div id="resultado" class="w3-bar"></div>
-
-					<h5 id="semResultado" style="display: none">Sem informação de linhas no momento.</h5>
-					
-					<br>
-					<div id="panelBotaoAtualizar" class="w3-bar">
-						<button onclick="buscarLinhasAtivas()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
-							<i class="fa fa-refresh fa-2x"></i>
-						</button>
-					</div>
-					
+				<p>
+					Então? Quer participar? Se está na parada de bobeira, <a href="to-na-parada.html">informe as linhas de ônibus</a> que você avistar. É quase como caçar pokemons!
+				</p>
+				
+				<p>
+					Se já estrá dentro do ônibus, então <a href="to-no-bus.html">rastreie sua posição</a> por alguns minutos. A coletividade agradece!
+				</p>
+				
 				</div>
+				
 			</div>
 			
 			<!-- End page content -->
@@ -89,7 +92,12 @@
 					overlayBg.style.display = "none";
 			}
 			
-			buscarLinhasAtivas();
+			lerEApresentarLinhasRecentes();
+			
+		</script>
+		
+		<script async defer
+			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC0xwjZVTzqUY50IcMqiResDBJED_TU1AQ&callback=initMap">
 		</script>
 
 	</body>
