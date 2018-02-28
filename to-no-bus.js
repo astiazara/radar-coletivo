@@ -173,7 +173,7 @@ function iniciar(linha){
 	
 	maximoTempo = 60 * maximoTempoEmMinutos;
 	linhaAtual = linha;
-  document.getElementById("tituloRastreando").innerHTML = "Rastreando linha " + linhaAtual;
+  document.getElementById("tituloRastreando").innerHTML = linhaAtual;
   
   prepararCronometro();
   
@@ -212,7 +212,8 @@ function aCadaSegundo(){
 }
 
 function apresentarCronometro(){
-  txtCronometro.innerHTML = contadorRegressivoTempo;
+	var textoSegundos = contadorRegressivoTempo < 2 ? "segundo restante" : "segundos restantes"; 
+  txtCronometro.innerHTML = contadorRegressivoTempo + " " + textoSegundos;
 }
 
 function parar(){

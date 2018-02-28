@@ -45,6 +45,9 @@
 				<div class="w3-container">
 					
 					<div id="formulario">
+						
+						<h5>Seu GPS será utilizado (ligar o Wi-Fi melhora a precisão).</h5>
+						
 						<h5>Rastrear por quanto tempo?</h5>
 						<select id="maximoTempo" class="w3-select" name="option">
 							<option value="1">1 minuto</option>
@@ -64,9 +67,9 @@
 					
 					<div id="rastreador" style="display: none">
 						<div class="w3-panel w3-padding w3-center">
-							<h2 id="tituloRastreando">Rastreando</h2>
+							<h2>Rastreando <span id="tituloRastreando"></span> <i class="fa fa-crosshairs fa-spin"></i></h2>
 							
-							<h1 id="cronometro">00</h1>
+							<h5 id="cronometro">00</h5>
 							
 							<button onclick="parar()" class="w3-bar-item w3-button w3-round-large w3-white w3-border" style="width:100px">
 								<i class="fa fa-hand-stop-o fa-2x"></i>

@@ -157,7 +157,7 @@ function buscarMaximoTempoAtrasEmMinutos() {
 }
 
 function calcularValorGrafico(minimoGrafico, maximoGrafico, segAtras){
-	// Descobrindo o intervalor gráfico.
+	// Descobrindo o intervalo gráfico.
 	var intervaloGrafico = maximoGrafico - minimoGrafico;
 	// Convertendo de seg para valor gráfico.
 	var valor = (segAtras * intervaloGrafico) / MAXIMO_SEGUNDOS_ATRAS;
