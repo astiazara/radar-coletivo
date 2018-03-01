@@ -158,7 +158,7 @@ $app->post('/linhas-ativas', function (Request $request, Response $response, arr
     $stmt->bindParam("lng", $lng);
     $stmt->execute();
 
-    $response->getBody()->write("Recebida a linha " . $linha);
+    $response = $response->withJson(array("msg"=>"Recebida a linha " . $linha, "pontoSalvo"=>$ajustado));
     $response = $response->withStatus(201);
   } else {
     $response->getBody()->write("Nao existe a linha " . $linha);

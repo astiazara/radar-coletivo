@@ -53,6 +53,7 @@ var textoLimpo = false;
 var idDigitacaoTimeout;
 var map;
 var marker;
+var contadorPontosSalvos = 0;
 
 
 function initMap() {	
@@ -64,7 +65,7 @@ function initMap() {
 	
 	marker = new google.maps.Marker({
     position: map.center,
-		animation: google.maps.Animation.DROP,
+		animation: google.maps.Animation.BOUNCE,
 		draggable: false,
     map: map
   });
@@ -274,5 +275,15 @@ function toStringCaminho(){
 }
 
 function apresentarResposta(responseText){
-	console.warn("Foi! Resposta: " + responseText);
+	contadorPontosSalvos++;
+	
+	var resposta = JSON.parse(responseText);
+	
+	var pontoSalvo = new google.maps.Marker({
+    position: resposta.pontoSalvo,
+		animation: google.maps.Animation.DROP,
+		draggable: false,
+		label: ("" + contadorPontosSalvos),
+    map: map
+  });
 }
